@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { saveLogin } from '../redux/actions';
 
 class Login extends Component {
   constructor() {
@@ -12,9 +14,12 @@ class Login extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.inputValidation = this.inputValidation.bind(this);
     this.handleSettingsButtons = this.handleSettingsButtons.bind(this);
+    this.handleSubmitButton = this.handleSubmitButton.bind(this);
+    this.saveOnRedux = this.saveOnRedux.bind(this);
   }
 
   async handleSubmitButton() {
+    const { history } = this.props;
     try {
       const response = await fetch(
         'https://opentdb.com/api_token.php?command=request',
@@ -22,12 +27,20 @@ class Login extends Component {
       const json = await response.json();
       if (!json.response_code) {
         localStorage.setItem('token', json.token);
+        this.saveOnRedux();
+        history.push('/game');
         return;
       }
       this.handleSubmitButton();
     } catch (e) {
       console.log(e);
     }
+  }
+
+  saveOnRedux() {
+    const { name, email } = this.state;
+    const { sendInfo } = this.props;
+    sendInfo({ name, email });
   }
 
   handleInputChange({ target }) {
@@ -102,8 +115,13 @@ class Login extends Component {
   }
 }
 
+const mapDispatchToProps = (dispatch) => ({
+  sendInfo: (payload) => dispatch(saveLogin(payload)),
+});
+
 Login.propTypes = {
   history: PropTypes.objectOf(PropTypes.any).isRequired,
+  sendInfo: PropTypes.func.isRequired,
 };
 
-export default Login;
+export default connect(null, mapDispatchToProps)(Login);
