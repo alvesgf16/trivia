@@ -12,6 +12,22 @@ class Login extends Component {
     this.inputValidation = this.inputValidation.bind(this);
   }
 
+  async handleSubmitButton() {
+    try {
+      const response = await fetch(
+        'https://opentdb.com/api_token.php?command=request',
+      );
+      const json = await response.json();
+      if (!json.response_code) {
+        localStorage.setItem('token', json.token);
+        return;
+      }
+      this.handleSubmitButton();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   handleInputChange({ target }) {
     const { name, value } = target;
     this.setState(
@@ -55,7 +71,12 @@ class Login extends Component {
             value={ email }
           />
         </label>
-        <button type="button" data-testid="btn-play" disabled={ isDisabled }>
+        <button
+          type="button"
+          data-testid="btn-play"
+          disabled={ isDisabled }
+          onClick={ this.handleSubmitButton }
+        >
           Jogar
         </button>
       </form>
