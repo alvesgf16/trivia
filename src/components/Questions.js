@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import Timer from './Timer';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import '../css/alternatives.css';
+import { resetTimer } from '../redux/actions';
 
 class Questions extends Component {
   constructor() {
@@ -8,6 +10,11 @@ class Questions extends Component {
     this.state = {
       questions: [],
       index: 0,
+    };
+    this.difficultyPoints = {
+      easy: 1,
+      medium: 2,
+      hard: 3,
     };
     this.getQuestions = this.getQuestions.bind(this);
     this.createQuestionsEl = this.createQuestionsEl.bind(this);
@@ -18,6 +25,13 @@ class Questions extends Component {
 
   componentDidMount() {
     this.getQuestions();
+  }
+
+  componentDidUpdate() {
+    const { isDisabled } = this.props;
+    if (isDisabled) {
+      this.handleTimerEnd();
+    }
   }
 
   async getQuestions() {
@@ -86,7 +100,7 @@ class Questions extends Component {
     const questionsEl = questions.map((question, index) => {
       const alternativesEl = this.createAlternativeButtons(question);
       return (
-        <div key={ `question-${index}` }>
+        <div key={ `question-${index}` } name={ question.difficulty }>
           <h3 data-testid="question-category">{question.category}</h3>
           <p data-testid="question-text">{question.question}</p>
           <section>{alternativesEl}</section>
@@ -98,11 +112,36 @@ class Questions extends Component {
     });
   }
 
-  handleAlternativeClick() {
+  savePoints(button) {
+    const BASE_POINTS = 10;
+    const { time } = this.props;
+    const question = button.closest('div');
+    const difficulty = this.difficultyPoints[question.getAttribute('name')];
+    const points = BASE_POINTS + (time * difficulty);
+    this.savePointsOnLocalStorage(points);
+  }
+
+  savePointsOnLocalStorage(points) {
+    const localStoragePlayer = JSON.parse(localStorage.getItem('player'));
+    if (localStoragePlayer) {
+      const savedPoints = localStoragePlayer.score || 0;
+      localStorage.setItem('player', JSON.stringify({
+        ...localStoragePlayer,
+        score: savedPoints + points,
+      }));
+    } else {
+      localStorage.setItem('player', JSON.stringify({ score: points }));
+    }
+  }
+
+  handleAlternativeClick({ target }) {
     const alternatives = document.querySelectorAll('.alternative');
     alternatives.forEach((alt) => {
       alt.classList.add(alt.name);
     });
+    if (target.name === 'correct') {
+      this.savePoints(target);
+    }
   }
 
   handleTimerEnd() {
@@ -119,10 +158,24 @@ class Questions extends Component {
         <section>
           {questions[index]}
         </section>
-        <Timer handleTimerEnd={ this.handleTimerEnd } />
       </div>
     );
   }
 }
 
-export default Questions;
+const mapStateToProps = (state) => ({
+  isDisabled: state.timer.timerEnded,
+  time: state.timer.time,
+});
+
+const mapDispatchtoProps = (dispatch) => ({
+  resetTimer: () => dispatch(resetTimer()),
+});
+
+Questions.propTypes = {
+  isDisabled: PropTypes.bool.isRequired,
+  time: PropTypes.number.isRequired,
+  // resetTimer: PropTypes.func.isRequired,
+};
+
+export default connect(mapStateToProps, mapDispatchtoProps)(Questions);
