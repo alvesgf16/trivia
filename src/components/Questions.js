@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Timer from './Timer';
 import '../css/alternatives.css';
 
 class Questions extends Component {
@@ -12,6 +13,7 @@ class Questions extends Component {
     this.createQuestionsEl = this.createQuestionsEl.bind(this);
     this.handleAlternativeClick = this.handleAlternativeClick.bind(this);
     this.createAlternativeButtons = this.createAlternativeButtons.bind(this);
+    this.handleTimerEnd = this.handleTimerEnd.bind(this);
   }
 
   componentDidMount() {
@@ -51,7 +53,6 @@ class Questions extends Component {
         name="correct"
         onClick={ this.handleAlternativeClick }
         className="alternative"
-
       >
         {question.correct_answer}
       </button>,
@@ -104,9 +105,23 @@ class Questions extends Component {
     });
   }
 
+  handleTimerEnd() {
+    const alternatives = document.querySelectorAll('.alternative');
+    alternatives.forEach((alt) => {
+      alt.disabled = true;
+    });
+  }
+
   render() {
     const { questions, index } = this.state;
-    return <div>{questions[index]}</div>;
+    return (
+      <div>
+        <section>
+          {questions[index]}
+        </section>
+        <Timer handleTimerEnd={ this.handleTimerEnd } />
+      </div>
+    );
   }
 }
 
