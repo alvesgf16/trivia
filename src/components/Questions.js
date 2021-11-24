@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import '../css/alternatives.css';
 
 class Questions extends Component {
   constructor() {
@@ -9,6 +10,7 @@ class Questions extends Component {
     };
     this.getQuestions = this.getQuestions.bind(this);
     this.createQuestionsEl = this.createQuestionsEl.bind(this);
+    this.handleAlternativeClick = this.handleAlternativeClick.bind(this);
     this.createAlternativeButtons = this.createAlternativeButtons.bind(this);
   }
 
@@ -34,6 +36,9 @@ class Questions extends Component {
         type="button"
         key={ `alternative-${index}` }
         data-testid={ `wrong-answer-${index}` }
+        name="wrong"
+        onClick={ this.handleAlternativeClick }
+        className="alternative"
       >
         {awns}
       </button>
@@ -43,6 +48,10 @@ class Questions extends Component {
         key={ `alternative-${alternativesEl.lenght}` }
         type="button"
         data-testid="correct-answer"
+        name="correct"
+        onClick={ this.handleAlternativeClick }
+        className="alternative"
+
       >
         {question.correct_answer}
       </button>,
@@ -85,6 +94,13 @@ class Questions extends Component {
     });
     this.setState({
       questions: questionsEl,
+    });
+  }
+
+  handleAlternativeClick() {
+    const alternatives = document.querySelectorAll('.alternative');
+    alternatives.forEach((alt) => {
+      alt.classList.add(alt.name);
     });
   }
 
