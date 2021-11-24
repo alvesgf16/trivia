@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class Login extends Component {
   constructor() {
@@ -10,6 +11,7 @@ class Login extends Component {
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.inputValidation = this.inputValidation.bind(this);
+    this.handleSettingsButtons = this.handleSettingsButtons.bind(this);
   }
 
   async handleSubmitButton() {
@@ -45,43 +47,63 @@ class Login extends Component {
     });
   }
 
+  handleSettingsButtons() {
+    const { history } = this.props;
+    history.push('/settings');
+  }
+
   render() {
     const { name, email, isDisabled } = this.state;
     return (
-      <form>
-        <label htmlFor="input-name">
-          Nome
-          <input
-            type="text"
-            name="name"
-            data-testid="input-player-name"
-            id="input-name"
-            onChange={ this.handleInputChange }
-            value={ name }
-          />
-        </label>
-        <label htmlFor="input-email">
-          Email
-          <input
-            type="email"
-            name="email"
-            data-testid="input-gravatar-email"
-            id="input-email"
-            onChange={ this.handleInputChange }
-            value={ email }
-          />
-        </label>
-        <button
-          type="button"
-          data-testid="btn-play"
-          disabled={ isDisabled }
-          onClick={ this.handleSubmitButton }
-        >
-          Jogar
-        </button>
-      </form>
+      <div>
+        <div>
+          <button
+            type="button"
+            data-testid="btn-settings"
+            onClick={ this.handleSettingsButtons }
+          >
+            Settings
+          </button>
+        </div>
+        <form>
+          <label htmlFor="input-name">
+            Nome
+            <input
+              type="text"
+              name="name"
+              data-testid="input-player-name"
+              id="input-name"
+              onChange={ this.handleInputChange }
+              value={ name }
+            />
+          </label>
+          <label htmlFor="input-email">
+            Email
+            <input
+              type="email"
+              name="email"
+              data-testid="input-gravatar-email"
+              id="input-email"
+              onChange={ this.handleInputChange }
+              value={ email }
+            />
+          </label>
+          <button
+            type="button"
+            data-testid="btn-play"
+            disabled={ isDisabled }
+            onClick={ this.handleSubmitButton }
+          >
+            Jogar
+          </button>
+        </form>
+      </div>
     );
   }
 }
+
+Login.propTypes = {
+  history: PropTypes.objectOf(PropTypes.any).isRequired,
+};
 
 export default Login;
