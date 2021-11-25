@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Header from '../components/Header';
 import Questions from '../components/Questions';
+import Timer from '../components/Timer';
 
 class Game extends Component {
   render() {
@@ -9,9 +9,10 @@ class Game extends Component {
       <div>
         <Header />
         <Questions />
+        <Timer />
       </div>
     );
   }
 }
 
-export default connect()(Game);
+export default Game;

@@ -234,7 +234,7 @@ describe.skip('8 - [TELA DE JOGO] Desenvolva um timer onde a pessoa que joga tem
   });
 });
 
-describe('9 - [TELA DE JOGO] Crie o placar com as seguintes características:', () => {
+describe.only('9 - [TELA DE JOGO] Crie o placar com as seguintes características:', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/');
     cy.clearLocalStorage();
