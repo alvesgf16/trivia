@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import '../css/alternatives.css';
-import { resetTimer } from '../redux/actions';
+import { resetTimer as resetTimerAction } from '../redux/actions';
 
 class Questions extends Component {
   constructor() {
@@ -11,7 +11,9 @@ class Questions extends Component {
       questions: [],
       index: 0,
       isNextVisible: false,
+      timerStopped: false,
     };
+
     this.difficultyPoints = {
       easy: 1,
       medium: 2,
@@ -31,7 +33,8 @@ class Questions extends Component {
 
   componentDidUpdate() {
     const { isDisabled } = this.props;
-    if (isDisabled) {
+    const { timerStopped } = this.state;
+    if (isDisabled && !timerStopped) {
       this.handleTimerEnd();
     }
   }
@@ -151,14 +154,28 @@ class Questions extends Component {
     alternatives.forEach((alt) => {
       alt.disabled = true;
     });
-    this.setState({ isNextVisible: true });
+    this.setState({
+      isNextVisible: true,
+      timerStopped: true,
+    });
   }
 
   handleNextClick() {
-    this.setState((state) => ({
-      index: state.index + 1,
-      isNextVisible: false,
-    }));
+    const { resetTimer, history } = this.props;
+    const { index } = this.state;
+    const MAX_NUMBER_OF_QUESTIONS = 4;
+
+    if (index < MAX_NUMBER_OF_QUESTIONS) {
+      this.setState((state) => ({
+        index: state.index + 1,
+        isNextVisible: false,
+      }));
+      resetTimer();
+      this.setState(({ timerStopped: false }));
+    } else {
+      console.log(history);
+      history.push('/feedback');
+    }
   }
 
   render() {
@@ -188,13 +205,16 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchtoProps = (dispatch) => ({
-  resetTimer: () => dispatch(resetTimer()),
+  resetTimer: () => dispatch(resetTimerAction()),
 });
 
 Questions.propTypes = {
   isDisabled: PropTypes.bool.isRequired,
   time: PropTypes.number.isRequired,
-  // resetTimer: PropTypes.func.isRequired,
+  resetTimer: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchtoProps)(Questions);
