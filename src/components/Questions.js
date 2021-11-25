@@ -10,6 +10,7 @@ class Questions extends Component {
     this.state = {
       questions: [],
       index: 0,
+      isNextVisible: false,
     };
     this.difficultyPoints = {
       easy: 1,
@@ -21,6 +22,7 @@ class Questions extends Component {
     this.handleAlternativeClick = this.handleAlternativeClick.bind(this);
     this.createAlternativeButtons = this.createAlternativeButtons.bind(this);
     this.handleTimerEnd = this.handleTimerEnd.bind(this);
+    this.handleNextClick = this.handleNextClick.bind(this);
   }
 
   componentDidMount() {
@@ -141,6 +143,7 @@ class Questions extends Component {
     if (target.name === 'correct') {
       this.savePoints(target);
     }
+    this.setState({ isNextVisible: true });
   }
 
   handleTimerEnd() {
@@ -148,15 +151,32 @@ class Questions extends Component {
     alternatives.forEach((alt) => {
       alt.disabled = true;
     });
+    this.setState({ isNextVisible: true });
+  }
+
+  handleNextClick() {
+    this.setState((state) => ({
+      index: state.index + 1,
+      isNextVisible: false,
+    }));
   }
 
   render() {
-    const { questions, index } = this.state;
+    const { questions, index, isNextVisible } = this.state;
     return (
       <div>
         <section>
           {questions[index]}
         </section>
+        { isNextVisible && (
+          <button
+            data-testid="btn-next"
+            type="button"
+            onClick={ this.handleNextClick }
+          >
+            Próxima
+          </button>
+        ) }
       </div>
     );
   }
