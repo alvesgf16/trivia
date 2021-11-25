@@ -122,16 +122,15 @@ class Questions extends Component {
   }
 
   savePointsOnLocalStorage(points) {
-    const localStoragePlayer = JSON.parse(localStorage.getItem('player'));
-    if (localStoragePlayer) {
-      const savedPoints = localStoragePlayer.score || 0;
-      localStorage.setItem('player', JSON.stringify({
-        ...localStoragePlayer,
+    const localStorageState = JSON.parse(localStorage.getItem('state'));
+    const savedPoints = localStorageState.player.score;
+    const updatedState = {
+      player: {
+        ...localStorageState.player,
         score: savedPoints + points,
-      }));
-    } else {
-      localStorage.setItem('player', JSON.stringify({ score: points }));
-    }
+      },
+    };
+    localStorage.setItem('state', JSON.stringify(updatedState));
   }
 
   handleAlternativeClick({ target }) {

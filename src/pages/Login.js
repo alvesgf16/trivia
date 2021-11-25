@@ -26,7 +26,18 @@ class Login extends Component {
       );
       const json = await response.json();
       if (!json.response_code) {
+        const { name, email } = this.state;
+        const state = {
+          player: {
+            name,
+            assertions: 0,
+            score: 0,
+            gravatarEmail: email,
+          },
+        };
+
         localStorage.setItem('token', json.token);
+        localStorage.setItem('state', JSON.stringify(state));
         this.saveOnRedux();
         history.push('/game');
         return;
