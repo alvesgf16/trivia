@@ -40,7 +40,6 @@ class Timer extends Component {
 
   componentDidUpdate() {
     const { resetTimer, timerReseted } = this.props;
-    console.log(resetTimer);
     if (resetTimer) { // Se tiver action pra resetar
       timerReseted(); // Avisa que resetou
       this.resetarTimer();
