@@ -9,12 +9,18 @@ class Feedback extends Component {
     super();
 
     this.handlePlayAgain = this.handlePlayAgain.bind(this);
+    this.handleRanking = this.handleRanking.bind(this);
   }
 
   handlePlayAgain() {
     const { history, resetScore } = this.props;
     history.push('/');
     resetScore();
+  }
+
+  handleRanking() {
+    const { history } = this.props;
+    history.push('/ranking');
   }
 
   render() {
@@ -36,6 +42,13 @@ class Feedback extends Component {
           onClick={ this.handlePlayAgain }
         >
           Jogar novamente
+        </button>
+        <button
+          type="button"
+          data-testid="btn-ranking"
+          onClick={ this.handleRanking }
+        >
+          Ver Ranking
         </button>
       </div>
     );
