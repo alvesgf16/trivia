@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Header from '../components/Header';
 
@@ -7,24 +7,27 @@ class Feedback extends Component {
   render() {
     const localStorageState = JSON.parse(localStorage.getItem('state'));
     const correctAnswers = localStorageState.player.assertions;
+    const { score } = this.props;
     const ACCEPTABLE_SCORE = 3;
     return (
       <div>
         <Header />
-        <p data-testid="feedback-text">
+        <h3 data-testid="feedback-text">
           { correctAnswers < ACCEPTABLE_SCORE ? 'Podia ser melhor...' : 'Mandou bem!' }
-        </p>
+        </h3>
+        <h2 data-testid="feedback-total-score">{ score }</h2>
+        <p data-testid="feedback-total-question">{ correctAnswers }</p>
       </div>
     );
   }
 }
 
-// Feedback.propTypes = {
-//   score: PropTypes.number.isRequired,
-// };
+Feedback.propTypes = {
+  score: PropTypes.number.isRequired,
+};
 
-// const mapStateToProps = (state) => ({
-//   score: state.player.score,
-// });
+const mapStateToProps = (state) => ({
+  score: state.player.score,
+});
 
-export default connect(null)(Feedback);
+export default connect(mapStateToProps)(Feedback);
