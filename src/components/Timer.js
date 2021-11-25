@@ -13,22 +13,20 @@ class Timer extends Component {
     this.TIMER_START_VALUE = 30;
     this.state = {
       time: this.TIMER_START_VALUE,
+      intervalId: null,
     };
+
+    this.resetarTimer = this.resetarTimer.bind(this);
+    this.linkIntervalToId = this.linkIntervalToId.bind(this);
   }
 
   componentDidMount() {
-    const { timerEnded, timerReseted, resetTimer, saveTime } = this.props;
+    const { timerEnded, saveTime } = this.props;
     const ONE_SECOND = 1000;
-    setInterval(() => {
+    const interval = setInterval(() => {
       this.setState((state) => {
         if (!state.time) { // caso tenha chegado em 0
           timerEnded(); // Avisa que chegou em 0
-        }
-        if (resetTimer) { // Se tiver action pra resetar
-          timerReseted(); // Avisa que resetou
-          return { // Reseta o estado pro valor inicial
-            time: this.TIMER_START_VALUE,
-          };
         }
         const newTime = state.time === 0 ? 0 : state.time - 1;
         saveTime(newTime);
@@ -37,6 +35,33 @@ class Timer extends Component {
         };
       });
     }, ONE_SECOND);
+    this.linkIntervalToId(interval);
+  }
+
+  componentDidUpdate() {
+    const { resetTimer, timerReseted } = this.props;
+    console.log(resetTimer);
+    if (resetTimer) { // Se tiver action pra resetar
+      timerReseted(); // Avisa que resetou
+      this.resetarTimer();
+    }
+  }
+
+  componentWillUnmount() {
+    const { intervalId } = this.state;
+    clearInterval(intervalId);
+  }
+
+  resetarTimer() {
+    this.setState({ // Reseta o estado pro valor inicial
+      time: this.TIMER_START_VALUE,
+    });
+  }
+
+  linkIntervalToId(interval) {
+    this.setState({
+      intervalId: interval,
+    });
   }
 
   render() {
