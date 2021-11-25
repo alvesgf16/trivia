@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { MD5 } from 'crypto-js';
 import '../css/alternatives.css';
 import {
   resetTimer as resetTimerAction,
@@ -22,12 +23,14 @@ class Questions extends Component {
       medium: 2,
       hard: 3,
     };
+
     this.getQuestions = this.getQuestions.bind(this);
     this.createQuestionsEl = this.createQuestionsEl.bind(this);
     this.handleAlternativeClick = this.handleAlternativeClick.bind(this);
     this.createAlternativeButtons = this.createAlternativeButtons.bind(this);
     this.handleTimerEnd = this.handleTimerEnd.bind(this);
     this.handleNextClick = this.handleNextClick.bind(this);
+    this.saveFinalScore = this.saveFinalScore.bind(this);
   }
 
   componentDidMount() {
@@ -69,7 +72,7 @@ class Questions extends Component {
     ));
     alternativesEl.push(
       <button
-        key={ `alternative-${alternativesEl.lenght}` }
+        key={ `alternative-${alternativesEl.length}` }
         type="button"
         data-testid="correct-answer"
         name="correct"
@@ -179,7 +182,24 @@ class Questions extends Component {
       resetTimer();
       this.setState(({ timerStopped: false }));
     } else {
+      this.saveFinalScore();
       history.push('/feedback');
+    }
+  }
+
+  saveFinalScore() {
+    const localStorageState = JSON.parse(localStorage.getItem('state'));
+    const { name, gravatarEmail, score } = localStorageState.player;
+    const hash = MD5(gravatarEmail.toLowerCase().trim()).toString();
+    const url = `https://www.gravatar.com/avatar/${hash}`;
+    const rankingEl = { name, score, picture: url };
+
+    if (localStorage.getItem('ranking')) {
+      const savedRanking = JSON.parse(localStorage.getItem('ranking'));
+      const updatedRanking = [...savedRanking, rankingEl];
+      localStorage.setItem('ranking', JSON.stringify(updatedRanking));
+    } else {
+      localStorage.setItem('ranking', JSON.stringify([rankingEl]));
     }
   }
 
@@ -218,9 +238,7 @@ Questions.propTypes = {
   isDisabled: PropTypes.bool.isRequired,
   time: PropTypes.number.isRequired,
   resetTimer: PropTypes.func.isRequired,
-  history: PropTypes.shape({
-    push: PropTypes.func,
-  }).isRequired,
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   updateScore: PropTypes.func.isRequired,
 };
 
