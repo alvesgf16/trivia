@@ -13,7 +13,7 @@ class Header extends Component {
   }
 
   render() {
-    const { name, email } = this.props;
+    const { name, email, score } = this.props;
     const hash = MD5(email.toLowerCase().trim()).toString();
     const url = 'https://www.gravatar.com/avatar/';
     return (
@@ -27,8 +27,8 @@ class Header extends Component {
             alt="profile"
             src={ `${url}${hash}` }
           />
-          <h2 data-testid="header-player-name">{name}</h2>
-          <h4 data-testid="header-score">0</h4>
+          <h2 data-testid="header-player-name">{ name }</h2>
+          <h4 data-testid="header-score">{ score }</h4>
         </div>
       </header>
     );
@@ -36,13 +36,15 @@ class Header extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  name: state.login.name,
-  email: state.login.email,
+  name: state.player.name,
+  email: state.player.email,
+  score: state.player.score,
 });
 
 Header.propTypes = {
   name: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
+  score: PropTypes.number.isRequired,
 };
 
 export default connect(mapStateToProps)(Header);

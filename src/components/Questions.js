@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import '../css/alternatives.css';
-import { resetTimer as resetTimerAction } from '../redux/actions';
+import {
+  resetTimer as resetTimerAction,
+  updateScore as updateScoreAction,
+} from '../redux/actions';
 
 class Questions extends Component {
   constructor() {
@@ -119,11 +122,12 @@ class Questions extends Component {
 
   savePoints(button) {
     const BASE_POINTS = 10;
-    const { time } = this.props;
+    const { time, updateScore } = this.props;
     const question = button.closest('div');
     const difficulty = this.difficultyPoints[question.getAttribute('name')];
     const points = BASE_POINTS + (time * difficulty);
     this.savePointsOnLocalStorage(points);
+    updateScore(points);
   }
 
   savePointsOnLocalStorage(points) {
@@ -173,7 +177,6 @@ class Questions extends Component {
       resetTimer();
       this.setState(({ timerStopped: false }));
     } else {
-      console.log(history);
       history.push('/feedback');
     }
   }
@@ -206,6 +209,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchtoProps = (dispatch) => ({
   resetTimer: () => dispatch(resetTimerAction()),
+  updateScore: (points) => dispatch(updateScoreAction(points)),
 });
 
 Questions.propTypes = {
@@ -215,6 +219,7 @@ Questions.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
+  updateScore: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchtoProps)(Questions);
