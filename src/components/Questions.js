@@ -133,10 +133,12 @@ class Questions extends Component {
   savePointsOnLocalStorage(points) {
     const localStorageState = JSON.parse(localStorage.getItem('state'));
     const savedPoints = localStorageState.player.score;
+    const savedAssertions = localStorageState.player.assertions;
     const updatedState = {
       player: {
         ...localStorageState.player,
         score: savedPoints + points,
+        assertions: savedAssertions + 1,
       },
     };
     localStorage.setItem('state', JSON.stringify(updatedState));
