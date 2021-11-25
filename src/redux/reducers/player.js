@@ -1,4 +1,4 @@
-import { SAVE_LOGIN, UPDATE_SCORE } from '../actions';
+import { RESET_SCORE, SAVE_LOGIN, UPDATE_SCORE } from '../actions';
 
 const INITIAL_STATE = {
   name: '',
@@ -12,6 +12,8 @@ const player = (state = INITIAL_STATE, action) => {
     return { ...state, ...action.payload };
   case UPDATE_SCORE:
     return { ...state, score: state.score + action.payload };
+  case RESET_SCORE:
+    return { ...state, score: 0 };
   default:
     return state;
   }

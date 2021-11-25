@@ -4,6 +4,7 @@ export const TIMER_ENDED = 'TIMER_ENDED';
 export const TIMER_RESETED = 'TIMER_RESETED';
 export const SAVE_TIME = 'SAVE_TIME';
 export const UPDATE_SCORE = 'UPDATE_SCORE';
+export const RESET_SCORE = 'RESET_SCORE';
 
 export const saveLogin = (payload) => ({
   type: SAVE_LOGIN,
@@ -30,4 +31,8 @@ export const saveTime = (time) => ({
 export const updateScore = (payload) => ({
   type: UPDATE_SCORE,
   payload,
+});
+
+export const resetScore = () => ({
+  type: RESET_SCORE,
 });
